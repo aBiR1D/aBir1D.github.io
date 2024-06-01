@@ -353,6 +353,32 @@ article .icon {
   cursor: default;
 }
 
+.talk-img{
+  border-radius: 2rem;
+  width: 70%;
+  height: 60%;
+}
+
+.talk-title {
+  margin: 1rem;
+  color: black;
+}
+
+.talk-btn {
+  color: black;
+  border-color: rgb(163, 163, 163);
+}
+
+.talk-title {
+  margin: 1rem;
+  color: black;
+}
+
+.talk-btn {
+  color: black;
+  border-color: rgb(163, 163, 163);
+}
+
 /* PROJECTS SECTION */
 
 #projects {
@@ -367,7 +393,7 @@ article .icon {
 .project-img {
   border-radius: 2rem;
   width: 90%;
-  height: 90%;
+  height: 100%;
 }
 
 .project-title {
