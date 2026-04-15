@@ -285,6 +285,8 @@ section {
 
 .about-pic {
   border-radius: 2rem;
+  max-width: 100%;
+  height: auto;
 }
 
 .arrow {
@@ -312,6 +314,11 @@ section {
   height: 400px;
   width: 400px;
   margin: auto 0;
+}
+
+.section__pic-container img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* EXPERIENCE SECTION */
@@ -385,6 +392,16 @@ article .icon {
   position: relative;
 }
 
+#projects .about-containers {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#projects .details-container {
+  flex: 1 1 calc(50% - 2rem);
+  max-width: calc(50% - 1rem);
+}
+
 .color-container {
   border-color: rgb(163, 163, 163);
   background: rgb(250, 250, 250);
@@ -393,7 +410,10 @@ article .icon {
 .project-img {
   border-radius: 2rem;
   width: 90%;
-  height: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  max-width: 100%;
 }
 
 .project-title {
