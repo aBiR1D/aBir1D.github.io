@@ -756,7 +756,7 @@ body.cursor-hover .cursor-ring {
   width: 100%;
 }
 .orb-reveal.is-open {
-  max-height: 600px; opacity: 1;
+  max-height: 1200px; opacity: 1;
 }
 
 /* Card entrance */
@@ -864,6 +864,7 @@ body.cursor-hover .cursor-ring {
   font-size: 0.78rem; color: var(--text-secondary);
   line-height: 1.6; margin: 0;
 }
+
 
 
 /* =============================================

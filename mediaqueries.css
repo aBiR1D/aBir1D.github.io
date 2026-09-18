@@ -194,6 +194,9 @@
   /* Card body always expanded on touch (no hover available) */
   .exp-card-body { max-height: none; opacity: 1; margin-top: 0.75rem; }
 
+  /* Allow overflow when open so content is scrollable */
+  .orb-reveal.is-open { overflow: visible; }
+
   /* Stack cards vertically */
   .exp-cards { grid-template-columns: 1fr; }
 }

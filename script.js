@@ -138,7 +138,7 @@
     /* --- Touch swipe navigation --- */
     let touchStartY = 0;
     let touchStartTime = 0;
-    const SWIPE_THRESHOLD = 50;
+    const SWIPE_THRESHOLD = 100;
 
     document.addEventListener("touchstart", (e) => {
       touchStartY = e.changedTouches[0].clientY;
@@ -148,7 +148,7 @@
     document.addEventListener("touchend", (e) => {
       const dy = touchStartY - e.changedTouches[0].clientY;
       const dt = Date.now() - touchStartTime;
-      if (dt > 600) return;
+      if (dt > 400) return;
 
       const section = pages[currentPage];
       const inner = section.querySelector(".page-scroll");
@@ -431,6 +431,23 @@
         clearTimeout(timer);
       });
       target.addEventListener("mouseleave", closeReveal);
+
+      // Auto-collapse when scrolled to bottom (works on real mobile)
+      var pageScroll = section.closest(".page-scroll");
+      if (pageScroll) {
+        var checking = false;
+        pageScroll.addEventListener("scroll", function () {
+          if (!target.classList.contains("is-open") || checking) return;
+          var atBottom = pageScroll.scrollTop + pageScroll.clientHeight >= pageScroll.scrollHeight - 10;
+          if (atBottom) {
+            checking = true;
+            closeReveal();
+            pageScroll.scrollTop = 0;
+            setTimeout(function () { checking = false; }, 500);
+          }
+        }, { passive: true });
+      }
+
 
       orb.addEventListener("touchstart", function (e) {
         e.preventDefault();
