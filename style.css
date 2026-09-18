@@ -865,6 +865,42 @@ body.cursor-hover .cursor-ring {
   line-height: 1.6; margin: 0;
 }
 
+/* Round close button — mobile only */
+.orb-close-btn { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .orb-close-btn {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    margin: 1rem auto 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-cyan);
+    background: rgba(0,240,255,0.06);
+    color: var(--accent-cyan);
+    cursor: pointer; padding: 0;
+    pointer-events: auto;
+    position: relative; z-index: 100;
+    transition: all 0.3s ease;
+    animation: close-btn-pulse 2s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @keyframes close-btn-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(0,240,255,0.15); }
+    50%      { box-shadow: 0 0 18px rgba(0,240,255,0.35); }
+  }
+  .orb-close-btn:active {
+    background: rgba(0,240,255,0.2);
+    transform: scale(0.9);
+  }
+  .orb-close-btn.closing {
+    animation: close-btn-spin 0.3s ease-in forwards;
+  }
+  @keyframes close-btn-spin {
+    0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: rotate(90deg) scale(0); opacity: 0; }
+  }
+}
+
 
 
 /* =============================================
