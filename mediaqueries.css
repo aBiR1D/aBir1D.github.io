@@ -183,7 +183,7 @@
   .hm-ctrl--pause { width: 30px; height: 30px; }
 }
 
-/* ---- Touch: disable custom cursor & always expand reveal cards ---- */
+/* ---- Touch: disable custom cursor, tap-to-reveal orbs ---- */
 @media (hover: none) and (pointer: coarse) {
   body { cursor: auto; }
   .cursor-dot, .cursor-ring { display: none !important; }
@@ -191,16 +191,9 @@
   .about-orb-sphere { width: 80px; height: 80px; }
   .about-orb-sphere svg { width: 24px; height: 24px; }
 
-  /* Always show cards on touch — no hover needed */
-  .orb-reveal { max-height: none !important; opacity: 1 !important; overflow: visible !important; }
-  .orb-reveal .exp-card { transform: none !important; opacity: 1 !important; }
+  /* Card body always expanded on touch (no hover available) */
   .exp-card-body { max-height: none; opacity: 1; margin-top: 0.75rem; }
 
-  /* Don't hide sibling orb on touch */
-  .orb-section.is-hidden { opacity: 1 !important; transform: none !important; width: auto !important; overflow: visible !important; pointer-events: auto !important; }
-  .orb-section.is-expanded { flex: initial; }
-
-  /* Stack orbs and cards vertically */
-  .orb-row { flex-direction: column; align-items: center; gap: 1.5rem; }
+  /* Stack cards vertically */
   .exp-cards { grid-template-columns: 1fr; }
 }
