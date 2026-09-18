@@ -30,36 +30,23 @@
   }
 
   /* ========================================
-     2. FULL-PAGE NAVIGATION
+     2. SMOOTH SCROLL NAVIGATION
      ======================================== */
   let currentPage = 0;
-  let isAnimating = false;
-  let pages, container, indicators, navLinks, mobileLinks;
-  const ANIM_DURATION = 500;
+  let pages, indicators, navLinks, mobileLinks;
 
   function initPageNav() {
     pages = Array.from(document.querySelectorAll(".page"));
-    container = document.querySelector(".pages-container");
     indicators = Array.from(document.querySelectorAll(".indicator[data-page]"));
     navLinks = Array.from(document.querySelectorAll("#desktop-nav .nav-link[data-page]"));
     mobileLinks = Array.from(document.querySelectorAll(".menu-links a[data-page]"));
-    const totalPages = pages.length;
 
-    function goToPage(idx) {
-      if (isAnimating || idx < 0 || idx >= totalPages || idx === currentPage) return;
-      isAnimating = true;
-
-      pages[currentPage].classList.remove("active");
-      currentPage = idx;
-      pages[currentPage].classList.add("active");
-      container.style.transform = "translateY(-" + (currentPage * 100) + "vh)";
-
-      updateUI();
-
-      setTimeout(() => { isAnimating = false; }, ANIM_DURATION);
+    function scrollToPage(idx) {
+      if (idx < 0 || idx >= pages.length) return;
+      pages[idx].scrollIntoView({ behavior: "smooth" });
     }
 
-    window.__goToPage = goToPage;
+    window.__goToPage = scrollToPage;
 
     function updateUI() {
       indicators.forEach((dot) => {
@@ -74,101 +61,46 @@
     }
 
     indicators.forEach((dot) => {
-      dot.addEventListener("click", () => goToPage(+dot.dataset.page));
+      dot.addEventListener("click", () => scrollToPage(+dot.dataset.page));
     });
 
-    const allPageLinks = [...navLinks, ...mobileLinks];
+    var allPageLinks = [].concat(navLinks, mobileLinks);
     allPageLinks.forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-        goToPage(+link.dataset.page);
+        scrollToPage(+link.dataset.page);
       });
     });
 
     document.querySelectorAll(".page-arrow-down").forEach((btn) => {
-      btn.addEventListener("click", () => goToPage(currentPage + 1));
+      btn.addEventListener("click", () => scrollToPage(currentPage + 1));
     });
     document.querySelectorAll(".page-arrow-up").forEach((btn) => {
-      btn.addEventListener("click", () => goToPage(currentPage - 1));
+      btn.addEventListener("click", () => scrollToPage(currentPage - 1));
     });
 
-    /* --- Wheel navigation (debounced to prevent double-skip) --- */
-    let wheelLocked = false;
-    const WHEEL_LOCK_MS = 700;
-    const DELTA_THRESHOLD = 20;
-
-    window.addEventListener("wheel", (e) => {
-      if (isAnimating || wheelLocked) { e.preventDefault(); return; }
-
-      const section = pages[currentPage];
-      const inner = section.querySelector(".page-scroll");
-      const scrollEl = inner || section;
-      const hasScroll = scrollEl.scrollHeight > scrollEl.clientHeight + 5;
-      const direction = e.deltaY > 0 ? "down" : "up";
-
-      if (hasScroll) {
-        const atTop = scrollEl.scrollTop <= 3;
-        const atBottom = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 3;
-        if (direction === "down" && !atBottom) return;
-        if (direction === "up" && !atTop) return;
-      }
-
-      if (Math.abs(e.deltaY) < DELTA_THRESHOLD) return;
-
-      e.preventDefault();
-      wheelLocked = true;
-      setTimeout(() => { wheelLocked = false; }, WHEEL_LOCK_MS);
-
-      if (direction === "down") goToPage(currentPage + 1);
-      else goToPage(currentPage - 1);
-    }, { passive: false });
-
-    /* --- Keyboard navigation --- */
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown" || e.key === "PageDown") {
-        e.preventDefault(); goToPage(currentPage + 1);
-      }
-      if (e.key === "ArrowUp" || e.key === "PageUp") {
-        e.preventDefault(); goToPage(currentPage - 1);
-      }
-      if (e.key === "Home") { e.preventDefault(); goToPage(0); }
-      if (e.key === "End")  { e.preventDefault(); goToPage(totalPages - 1); }
-    });
-
-    /* --- Touch swipe navigation --- */
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    const SWIPE_THRESHOLD = 100;
-
-    document.addEventListener("touchstart", (e) => {
-      touchStartY = e.changedTouches[0].clientY;
-      touchStartTime = Date.now();
-    }, { passive: true });
-
-    document.addEventListener("touchend", (e) => {
-      const dy = touchStartY - e.changedTouches[0].clientY;
-      const dt = Date.now() - touchStartTime;
-      if (dt > 400) return;
-
-      const section = pages[currentPage];
-      const inner = section.querySelector(".page-scroll");
-      const scrollEl = inner || section;
-      const hasScroll = scrollEl.scrollHeight > scrollEl.clientHeight + 5;
-
-      if (Math.abs(dy) > SWIPE_THRESHOLD) {
-        if (dy > 0) {
-          if (hasScroll && scrollEl.scrollTop + scrollEl.clientHeight < scrollEl.scrollHeight - 3) return;
-          goToPage(currentPage + 1);
+    // Detect which page is in view
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          var idx = pages.indexOf(entry.target);
+          if (idx !== -1) {
+            currentPage = idx;
+            updateUI();
+          }
         } else {
-          if (hasScroll && scrollEl.scrollTop > 3) return;
-          goToPage(currentPage - 1);
+          entry.target.classList.remove("in-view");
         }
-      }
-    }, { passive: true });
+      });
+    }, { threshold: 0.3 });
 
-    pages[0].classList.add("active");
+    pages.forEach(function (page) {
+      observer.observe(page);
+    });
+
+    pages[0].classList.add("in-view");
     updateUI();
-
   }
 
   /* ========================================
@@ -444,8 +376,8 @@
         setTimeout(function () {
           closeReveal();
           closeBtn.classList.remove("closing");
-          var ps = section.closest(".page-scroll");
-          if (ps) ps.scrollTop = 0;
+          var ps = section.closest(".page");
+          if (ps) ps.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 300);
       }
 

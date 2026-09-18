@@ -80,7 +80,7 @@
   --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   --nav-h: 72px;
-  --page-transition: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* smooth scroll handled by scroll-behavior on body */
 }
 
 /* =============================================
@@ -100,10 +100,10 @@ body {
   font-family: var(--font-main);
   background: var(--bg-primary);
   color: var(--text-primary);
-  height: 100vh;
-  overflow: hidden;
   cursor: none;
   line-height: 1.6;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
@@ -361,37 +361,25 @@ body.cursor-hover .cursor-ring {
    ============================================= */
 .pages-container {
   width: 100%;
-  transition: transform var(--page-transition);
-  will-change: transform;
 }
 
 .page {
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
 }
 
-.page-scroll {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-.page-scroll::-webkit-scrollbar { width: 4px; }
-.page-scroll::-webkit-scrollbar-track { background: transparent; }
-.page-scroll::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 2px; }
-
 .page-inner {
   flex: 1;
   display: flex; flex-direction: column;
   justify-content: center;
   padding: calc(var(--nav-h) + 2rem) 8rem 2.5rem;
-  max-height: 100vh;
 }
 
+/* Pages with long content start from the top */
 .page-scroll.page-inner {
   justify-content: flex-start;
 }
@@ -406,6 +394,7 @@ body.cursor-hover .cursor-ring {
   transition-delay: calc(var(--stagger, 0) * 0.09s);
 }
 
+.page.in-view .animate-in,
 .page.active .animate-in {
   opacity: 1;
   transform: translateY(0);
@@ -865,7 +854,7 @@ body.cursor-hover .cursor-ring {
   line-height: 1.6; margin: 0;
 }
 
-/* Round close button — mobile only */
+/* Round close button — mobile only, centered below content */
 .orb-close-btn { display: none; }
 @media (hover: none) and (pointer: coarse) {
   .orb-close-btn {
@@ -874,20 +863,16 @@ body.cursor-hover .cursor-ring {
   .orb-reveal.is-open .orb-close-btn {
     display: flex; align-items: center; justify-content: center;
     width: 28px; height: 28px;
+    margin: 1rem auto 0;
     border-radius: 50%;
     border: 1.5px solid var(--accent-cyan);
-    background: var(--bg-primary);
+    background: transparent;
     color: var(--accent-cyan);
     cursor: pointer; padding: 0;
     pointer-events: auto;
-    position: fixed; bottom: 0.75rem; right: 0.75rem;
-    z-index: 9998;
-    animation: close-btn-float 3s ease-in-out infinite, close-btn-pulse 2s ease-in-out infinite;
+    z-index: 10;
+    animation: close-btn-pulse 2s ease-in-out infinite;
     -webkit-tap-highlight-color: transparent;
-  }
-  @keyframes close-btn-float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-6px); }
   }
   @keyframes close-btn-pulse {
     0%, 100% { box-shadow: 0 0 8px rgba(0,240,255,0.15); }
